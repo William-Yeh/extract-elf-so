@@ -128,21 +128,6 @@ func extract_so_files(ldd_output string) []string {
 	return filelist
 }
 
-// remove duplicates in a slice.
-// @see https://groups.google.com/d/msg/golang-nuts/-pqkICuokio/ZfSRfU_CdmkJ
-func RemoveDuplicates(xs *[]string) {
-	found := make(map[string]bool)
-	j := 0
-	for i, x := range *xs {
-		if !found[x] {
-			found[x] = true
-			(*xs)[j] = (*xs)[i]
-			j++
-		}
-	}
-	*xs = (*xs)[:j]
-}
-
 func output_files(arguments map[string]interface{}, so_filelist []string) {
 
 	var tarball_filelist = make([]string, 50)
@@ -172,7 +157,7 @@ func output_files(arguments map[string]interface{}, so_filelist []string) {
 
 		tarball_filelist = append(tarball_filelist, dest_file_relpath[1:]) // remove heading '/' char
 
-		if exec.Command("cp", "-rf", file, exe_dest_dir).Run() != nil {
+		if exec.Command("cp", "-rf", "--dereference", file, exe_dest_dir).Run() != nil {
 			checkError(err)
 		}
 		if os.Chmod(dest_file_fullpath, 0755) != nil {
@@ -199,9 +184,13 @@ func output_files(arguments map[string]interface{}, so_filelist []string) {
 		}
 
 		for _, file := range arguments["--add"].([]string) {
-			if exec.Command("cp", "-rf", file, so_dest_dir).Run() != nil {
+			if exec.Command("cp", "-rf", "--dereference", file, so_dest_dir).Run() != nil {
 				checkError(err)
 			}
+
+			dest_file_basename := path.Base(file)
+			dest_file_relpath := path.Join(arguments["--sodir"].(string), dest_file_basename)
+			tarball_filelist = append(tarball_filelist, dest_file_relpath[1:]) // remove heading '/' char
 		}
 	}
 
@@ -222,6 +211,21 @@ func output_files(arguments map[string]interface{}, so_filelist []string) {
 	if exec.Command("tar", cmd_args...).Run() != nil {
 		checkError(err)
 	}
+}
+
+// remove duplicates in a slice.
+// @see https://groups.google.com/d/msg/golang-nuts/-pqkICuokio/ZfSRfU_CdmkJ
+func RemoveDuplicates(xs *[]string) {
+	found := make(map[string]bool)
+	j := 0
+	for i, x := range *xs {
+		if !found[x] {
+			found[x] = true
+			(*xs)[j] = (*xs)[i]
+			j++
+		}
+	}
+	*xs = (*xs)[:j]
 }
 
 func checkError(err error) {
