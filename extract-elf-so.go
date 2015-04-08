@@ -39,7 +39,6 @@ var REGEX_SO_FILE = regexp.MustCompile(`\s(\/[^\s]+)\s+\([^)]+\)$`)
 var TARBALL_FILENAME string = ""
 var TAR_COMPRESSION_MODE string = "-cvf"
 
-
 const USAGE string = `Extract .so files from specified ELF executables, and pack them in a tarball.
 
 Usage:
@@ -57,7 +56,6 @@ Options:
                                     [default: /usr/lib].
   -z                              Compress the output tarball using gzip.
 `
-
 
 func main() {
 	arguments := process_cmdline()
@@ -139,9 +137,7 @@ func output_files(arguments map[string]interface{}, so_filelist []string) {
 	if err != nil {
 		checkError(err)
 	}
-	defer func() {
-		os.RemoveAll(temp_dir)
-	}()
+	defer os.RemoveAll(temp_dir)
 
 	//
 	// copy ELF file(s) to temp output directory...
@@ -173,7 +169,6 @@ func output_files(arguments map[string]interface{}, so_filelist []string) {
 	RemoveDuplicates(&tarball_filelist)
 	//fmt.Println(tarball_filelist)
 
-
 	//
 	// copy additional .so file(s)...
 	//
@@ -194,21 +189,29 @@ func output_files(arguments map[string]interface{}, so_filelist []string) {
 		}
 	}
 
-
 	//
 	// generate tarball...
 	//
 	pwd, _ := os.Getwd()
 	rootfs_tarball_fullpath := path.Join(pwd, TARBALL_FILENAME)
+	output_tarball(rootfs_tarball_fullpath, compactArray(tarball_filelist), temp_dir)
+}
 
-	if os.Chdir(temp_dir) != nil {
+func output_tarball(tarball_fullpath string, tarball_filelist []string, working_dir string) {
+
+	dumpArray(tarball_filelist)
+
+	pwd, _ := os.Getwd()
+	if err := os.Chdir(working_dir); err != nil {
 		checkError(err)
 	}
+	defer os.Chdir(pwd)
 
-    cmd_args := []string{"--dereference", "-cvf", rootfs_tarball_fullpath}
+	cmd_args := []string{"--dereference", TAR_COMPRESSION_MODE, tarball_fullpath}
 	cmd_args = append(cmd_args, tarball_filelist...)
 	fmt.Println(cmd_args)
-	if exec.Command("tar", cmd_args...).Run() != nil {
+
+	if err := exec.Command("tar", cmd_args...).Run(); err != nil {
 		checkError(err)
 	}
 }
@@ -226,6 +229,23 @@ func RemoveDuplicates(xs *[]string) {
 		}
 	}
 	*xs = (*xs)[:j]
+}
+
+// compact nil slice items
+func compactArray(entries []string) []string {
+	new_entries := entries[:0]
+	for _, x := range entries {
+		if len(x) > 0 {
+			new_entries = append(new_entries, x)
+		}
+	}
+	return new_entries
+}
+
+func dumpArray(data []string) {
+	for _, item := range data {
+		fmt.Println("'" + item + "'")
+	}
 }
 
 func checkError(err error) {
