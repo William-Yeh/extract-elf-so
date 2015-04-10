@@ -25,6 +25,7 @@ Options:
   -s <so_dir>, --sodir <so_dir>   Directory in the tarball to place additional .so files;
                                     [default: /usr/lib].
   -z                              Compress the output tarball using gzip.
+  --nss-net                       Install networking stuff of NSS;  [default: false].
 
 ```
 
@@ -64,12 +65,14 @@ It will place the `extract-elf-so_linux-amd64` and `extract-elf-so_static_linux-
 
 ## Caveats
 
-This program doesn't handle *name service switch (nss)* stuff. If this is important for you, read the article: ["Creating minimal Docker images from dynamically linked ELF binaries"](http://blog.oddbit.com/2015/02/05/creating-minimal-docker-images/).
+This program only handle parts of the [*Name Service Switch (NSS)*](http://www.gnu.org/software/libc/manual/html_node/Name-Service-Switch.html) stuff. If this is important for you, read the article: ["Creating minimal Docker images from dynamically linked ELF binaries"](http://blog.oddbit.com/2015/02/05/creating-minimal-docker-images/).
 
 
 ## History
 
+- 0.2 - Handle parts of [*Name Service Switch (NSS)*](http://www.gnu.org/software/libc/manual/html_node/Name-Service-Switch.html) stuff.
 - 0.1 - Initial release.
+
 
 ## Author
 

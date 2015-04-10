@@ -36,6 +36,17 @@ import (
 var REGEX_VDSO = regexp.MustCompile(`linux-vdso.so`)
 var REGEX_SO_FILE = regexp.MustCompile(`\s(\/[^\s]+)\s+\([^)]+\)$`)
 
+var NSS_NET_SO_FILES = []string{
+	"/lib/x86_64-linux-gnu/libresolv.so.2",
+	"/usr/lib/libdns.so.100",
+	"/lib/x86_64-linux-gnu/libnss_dns.so.2",
+	"/lib/x86_64-linux-gnu/libnss_files.so.2",
+	"/lib/x86_64-linux-gnu/libnss_myhostname.so.2"}
+
+var NSS_NET_ETC_FILES = []string{
+	"/etc/nsswitch.conf",
+	"/etc/services"}
+
 var TARBALL_FILENAME string = ""
 var TAR_COMPRESSION_MODE string = "-cvf"
 
@@ -55,6 +66,8 @@ Options:
   -s <so_dir>, --sodir <so_dir>   Directory in the tarball to place additional .so files;
                                     [default: /usr/lib].
   -z                              Compress the output tarball using gzip.
+  --nss-net                       Install networking stuff of NSS;  [default: false].
+
 `
 
 func main() {
@@ -163,10 +176,18 @@ func output_files(arguments map[string]interface{}, so_filelist []string) {
 	//fmt.Println(tarball_filelist)
 
 	//
+	// append --nss-net files, if necessary...
+	//
+	if arguments["--nss-net"].(bool) {
+		tarball_filelist = append(tarball_filelist, NSS_NET_SO_FILES...)
+		tarball_filelist = append(tarball_filelist, NSS_NET_ETC_FILES...)
+	}
+	//fmt.Println(tarball_filelist)
+
+	//
 	// append .so files deduced from ELF file(s)...
 	//
 	tarball_filelist = append(tarball_filelist, so_filelist...)
-	RemoveDuplicates(&tarball_filelist)
 	//fmt.Println(tarball_filelist)
 
 	//
@@ -194,6 +215,7 @@ func output_files(arguments map[string]interface{}, so_filelist []string) {
 	//
 	pwd, _ := os.Getwd()
 	rootfs_tarball_fullpath := path.Join(pwd, TARBALL_FILENAME)
+	RemoveDuplicates(&tarball_filelist)
 	output_tarball(rootfs_tarball_fullpath, compactArray(tarball_filelist), temp_dir)
 }
 
