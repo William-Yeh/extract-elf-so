@@ -50,6 +50,8 @@ var NSS_NET_ETC_FILES = []string{
 var TARBALL_FILENAME string = ""
 var TAR_COMPRESSION_MODE string = "-cvf"
 
+const VERSION_NUMBER string = "0.2"
+
 const USAGE string = `Extract .so files from specified ELF executables, and pack them in a tarball.
 
 Usage:
@@ -84,7 +86,7 @@ func main() {
 // This func parses and validates cmdline args
 func process_cmdline() map[string]interface{} {
 
-	arguments, _ := docopt.Parse(USAGE, nil, true, "0.1", false)
+	arguments, _ := docopt.Parse(USAGE, nil, true, VERSION_NUMBER, false)
 
 	// validate elf_files
 	for _, filename := range arguments["<elf_files>"].([]string) {
