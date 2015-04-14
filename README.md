@@ -70,6 +70,7 @@ This program only handle parts of the [*Name Service Switch (NSS)*](http://www.g
 
 ## History
 
+- 0.3 - Fix "not a dynamic executable" handling.
 - 0.2 - Handle parts of [*Name Service Switch (NSS)*](http://www.gnu.org/software/libc/manual/html_node/Name-Service-Switch.html) stuff.
 - 0.1 - Initial release.
 
