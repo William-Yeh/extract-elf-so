@@ -26,6 +26,7 @@ Options:
                                     [default: /usr/lib].
   -z                              Compress the output tarball using gzip.
   --nss-net                       Install networking stuff of NSS;  [default: false].
+  --cert                          Install necessary root CA certificates;  [default: false].
 
 ```
 
