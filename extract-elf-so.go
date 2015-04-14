@@ -35,6 +35,7 @@ import (
 
 var REGEX_VDSO = regexp.MustCompile(`linux-vdso.so`)
 var REGEX_SO_FILE = regexp.MustCompile(`\s(\/[^\s]+)\s+\([^)]+\)$`)
+var REGEX_NOT_DYNAMIC_FILE = regexp.MustCompile(`\s*not a dynamic executable`)
 
 var NSS_NET_SO_FILES = []string{
 	"/lib/x86_64-linux-gnu/libresolv.so.2",
@@ -113,7 +114,11 @@ func collect_ldd_output(elf_files []string) string {
 	for _, filename := range elf_files {
 		out, err := exec.Command("ldd", filename).Output()
 		if err != nil {
-			fmt.Printf("Error for %s - %s", filename, err)
+			// fully static case: skip!
+			if REGEX_NOT_DYNAMIC_FILE.FindStringSubmatch(string(out[:])) != nil {
+				continue
+			}
+			fmt.Printf("Error in collect_ldd_output() for %s - %s", filename, err)
 			os.Exit(1)
 		}
 		buffer.Write(out) // append to buffer
