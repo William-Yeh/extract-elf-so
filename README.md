@@ -1,6 +1,9 @@
 extract-elf-so
 ==============
 
+[![Build Status](https://travis-ci.org/William-Yeh/extract-elf-so.svg?branch=master)](https://travis-ci.org/William-Yeh/extract-elf-so)
+
+
 This program extracts .so files from specified ELF executables, and packs them in a tarball.
 
 
