@@ -33,15 +33,20 @@ import (
 	"github.com/docopt/docopt-go"
 )
 
+const VERSION_NUMBER string = "0.5"
+
 var REGEX_VDSO = regexp.MustCompile(`linux-vdso.so`)
 var REGEX_SO_FILE = regexp.MustCompile(`\s(\/[^\s]+)\s+\([^)]+\)$`)
 var REGEX_NOT_DYNAMIC_FILE = regexp.MustCompile(`\s*not a dynamic executable`)
 
 var NSS_NET_SO_FILES = []string{
 	"/lib/x86_64-linux-gnu/libresolv.so.2",
-	"/usr/lib/libdns.so.100",
 	"/lib/x86_64-linux-gnu/libnss_dns.so.2",
-	"/lib/x86_64-linux-gnu/libnss_files.so.2",
+	"/lib/x86_64-linux-gnu/libnss_files.so.2"}
+
+var NSS_NET_OPTIONAL_SO_FILES = []string{
+	"/usr/lib/libdns.so.100",
+	"/usr/lib/libdns.so.81",
 	"/lib/x86_64-linux-gnu/libnss_myhostname.so.2"}
 
 var NSS_NET_ETC_FILES = []string{
@@ -53,8 +58,6 @@ var CERT_FILES = []string{
 
 var TARBALL_FILENAME string = ""
 var TAR_COMPRESSION_MODE string = "-cvf"
-
-const VERSION_NUMBER string = "0.2"
 
 const USAGE string = `Extract .so files from specified ELF executables, and pack them in a tarball.
 
@@ -192,6 +195,12 @@ func output_files(arguments map[string]interface{}, so_filelist []string) {
 	if arguments["--nss-net"].(bool) {
 		tarball_filelist = append(tarball_filelist, NSS_NET_SO_FILES...)
 		tarball_filelist = append(tarball_filelist, NSS_NET_ETC_FILES...)
+
+		for _, file := range NSS_NET_OPTIONAL_SO_FILES {
+			if _, err := os.Stat(file); err == nil { // file exists
+				tarball_filelist = append(tarball_filelist, file)
+			}
+		}
 	}
 	if arguments["--cert"].(bool) {
 		tarball_filelist = append(tarball_filelist, CERT_FILES...)

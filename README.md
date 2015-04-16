@@ -74,6 +74,7 @@ This program only handle parts of the [*Name Service Switch (NSS)*](http://www.g
 
 ## History
 
+- 0.5 - Treat some NSS .so files as "optional".
 - 0.4 - Add "/etc/ssl/certs/ca-certificates.crt" to rootfs.
 - 0.3 - Fix "not a dynamic executable" handling.
 - 0.2 - Handle parts of [*Name Service Switch (NSS)*](http://www.gnu.org/software/libc/manual/html_node/Name-Service-Switch.html) stuff.
