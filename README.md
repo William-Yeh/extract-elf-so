@@ -6,6 +6,7 @@ extract-elf-so
 
 This program extracts .so files from specified ELF executables, and packs them in a tarball.
 
+It was initially invented as a tool to generate minimal Docker images. See the slides ["Quest for minimal Docker images"](http://william-yeh.github.io/docker-mini) for more details.
 
 
 ## Usage
@@ -32,6 +33,10 @@ Options:
   --cert                          Install necessary root CA certificates;  [default: false].
 
 ```
+
+## Download
+
+See the [releases](https://github.com/William-Yeh/extract-elf-so/releases) page.
 
 
 ## Runtime dependencies
@@ -69,7 +74,7 @@ It will place the `extract-elf-so_linux-amd64` and `extract-elf-so_static_linux-
 
 ## Caveats
 
-This program only handle parts of the [*Name Service Switch (NSS)*](http://www.gnu.org/software/libc/manual/html_node/Name-Service-Switch.html) stuff. If this is important for you, read the article: ["Creating minimal Docker images from dynamically linked ELF binaries"](http://blog.oddbit.com/2015/02/05/creating-minimal-docker-images/).
+This program only handles parts of the [*Name Service Switch (NSS)*](http://www.gnu.org/software/libc/manual/html_node/Name-Service-Switch.html) stuff. If this is important for you, read the article: ["Creating minimal Docker images from dynamically linked ELF binaries"](http://blog.oddbit.com/2015/02/05/creating-minimal-docker-images/).
 
 
 ## History
