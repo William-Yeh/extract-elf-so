@@ -34,9 +34,15 @@ Options:
 
 ```
 
-## Download
+## Download and install
 
 See the [releases](https://github.com/William-Yeh/extract-elf-so/releases) page.
+
+Or, use the `install.sh` script:
+
+```bash
+$ sudo ./install.sh
+```
 
 
 ## Runtime dependencies
@@ -79,6 +85,7 @@ This program only handles parts of the [*Name Service Switch (NSS)*](http://www.
 
 ## History
 
+- 0.6 - Use `en_US.UTF-8` locale to avoid messy `ldd` output.
 - 0.5 - Treat some NSS .so files as "optional".
 - 0.4 - Add "/etc/ssl/certs/ca-certificates.crt" to rootfs.
 - 0.3 - Fix "not a dynamic executable" handling.

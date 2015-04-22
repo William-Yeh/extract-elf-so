@@ -33,7 +33,7 @@ import (
 	"github.com/docopt/docopt-go"
 )
 
-const VERSION_NUMBER string = "0.5"
+const VERSION_NUMBER string = "0.6"
 
 var REGEX_VDSO = regexp.MustCompile(`linux-vdso.so`)
 var REGEX_SO_FILE = regexp.MustCompile(`\s(\/[^\s]+)\s+\([^)]+\)$`)
@@ -118,6 +118,7 @@ func process_cmdline() map[string]interface{} {
 func collect_ldd_output(elf_files []string) string {
 	var buffer bytes.Buffer
 
+	os.Setenv("LC_ALL", "en_US.UTF-8") // forbids non-English output from ldd
 	for _, filename := range elf_files {
 		out, err := exec.Command("ldd", filename).Output()
 		if err != nil {
@@ -260,6 +261,18 @@ func output_tarball(tarball_fullpath string, tarball_filelist []string, working_
 		checkError(err)
 	}
 }
+
+/*
+func ensureEngLocaleEnv() []string {
+	old_env := os.Environ()
+	for i, v := range old_env {
+		if v == "LC_ALL" {
+			old_env[i] = "" // clear old "LC_ALL=xxx"
+		}
+	}
+
+}
+*/
 
 // remove duplicates in a slice.
 // @see https://groups.google.com/d/msg/golang-nuts/-pqkICuokio/ZfSRfU_CdmkJ
