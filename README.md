@@ -41,7 +41,14 @@ See the [releases](https://github.com/William-Yeh/extract-elf-so/releases) page.
 Or, use the `install.sh` script:
 
 ```bash
-$ sudo ./install.sh
+$ ./install.sh  [VERSION]  [INSTALL PATH]
+```
+
+Or, install the latest version to `/usr/local/bin` with the following one-liner:
+
+```bash
+$ curl -sSL http://bit.ly/install-extract-elf-so \
+    | sudo bash
 ```
 
 
