@@ -1,0 +1,19 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker version
+
+    - cp Dockerfile-compile Dockerfile
+    - docker build  -t img   .
+
+test:
+  override:
+    - docker run -v $CIRCLE_ARTIFACTS:/dist  img
+    - ./extract-elf-so_static_linux-amd64 --help > result
+
+    - echo "==> Validating the test results..."
+    - sh -c "[ -s result ]"
