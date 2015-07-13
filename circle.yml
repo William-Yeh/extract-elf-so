@@ -7,8 +7,7 @@ dependencies:
     - docker info
     - docker version
 
-    - cp Dockerfile-compile Dockerfile
-    - docker build  -t img   .
+    - docker build  -f Dockerfile-compile  -t img   .
 
 test:
   override:
